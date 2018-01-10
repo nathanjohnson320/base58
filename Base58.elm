@@ -1,5 +1,11 @@
 module Base58 exposing (decode, encode)
 
+{-| Handles encoding/decoding base58 data
+
+# Transformations
+@docs decode, encode
+-}
+
 import String
 import Array exposing (Array)
 import BigInt exposing (BigInt, fromInt)
@@ -17,6 +23,11 @@ alphabetArr =
         |> Array.fromList
 
 
+{-| Decodes turns a string into its original BigInt
+        "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
+            |> Base58.decode
+        == BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
+-}
 decode : String -> BigInt
 decode str =
     let
@@ -52,7 +63,11 @@ decode str =
     in
         decoded
 
-
+{-| Encode turns a big int into a string
+        BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
+            |> Base58.encode
+        == "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
+-}
 encode : BigInt -> String
 encode num =
     let
@@ -63,15 +78,6 @@ encode num =
             encodeReduce num alphabetLength ( "", fromInt 0 )
     in
         encoded
-
-
-
--- while ($num >= $base_count) {
---     $div = $num / $base_count;
---     $mod = ($num - ($base_count * intval($div)));
---     $encoded = $alphabet[$mod] . $encoded;
---     $num = intval($div);
--- }
 
 
 encodeReduce : BigInt -> BigInt -> ( String, BigInt ) -> ( BigInt, String )
@@ -106,4 +112,3 @@ encodeReduce num alphabetLength ( encoded, n ) =
                 i ++ encoded
         in
             ( fromInt 0, newEncoded )
-

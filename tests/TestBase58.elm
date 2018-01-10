@@ -26,8 +26,6 @@ suite =
                             "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
                                 |> Base58.decode
 
-                        _ = Debug.log "Decoded" decoded
-
                         encoded =
                                 decoded
                                 |> Base58.encode
