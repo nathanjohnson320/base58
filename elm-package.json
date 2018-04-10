@@ -4,7 +4,7 @@
     "repository": "https://github.com/nathanjohnson320/base58.git",
     "license": "BSD3",
     "source-directories": [
-        "."
+        "src/"
     ],
     "exposed-modules": [
         "Base58"
