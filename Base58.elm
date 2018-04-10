@@ -2,8 +2,11 @@ module Base58 exposing (decode, encode)
 
 {-| Handles encoding/decoding base58 data
 
+
 # Transformations
+
 @docs decode, encode
+
 -}
 
 import String
@@ -24,9 +27,11 @@ alphabetArr =
 
 
 {-| Decodes turns a string into its original BigInt
-        "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
-            |> Base58.decode
-        == BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
+
+    "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
+    |> Base58.decode
+    == BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
+
 -}
 decode : String -> BigInt
 decode str =
@@ -63,10 +68,13 @@ decode str =
     in
         decoded
 
+
 {-| Encode turns a big int into a string
-        BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
-            |> Base58.encode
-        == "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
+
+    BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
+    |> Base58.encode
+    == "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
+
 -}
 encode : BigInt -> String
 encode num =
