@@ -70,7 +70,10 @@ decode str =
                 ( fromInt 1, Ok (fromInt 0) )
                 strList
     in
-        decodedResult
+        if str == "" then
+            Err "An empty string is not valid base58"
+        else
+            decodedResult
 
 
 {-| Encodes a BigInt into a string

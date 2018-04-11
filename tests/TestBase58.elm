@@ -28,7 +28,12 @@ decodeTests =
                 Base58.decode "Qmd4STeBJPJyDw9KhaDYfFd91W2cDkW6CFkzEF8gveVfXg"
                     |> Result.map BigInt.toString
                     |> Expect.equal (Ok "537374223645606396327404992513981989153791146196994939352589708590914230509284699")
-        , test "invalid char" <|
+        , test "empty string" <|
+            \_ ->
+                Base58.decode ""
+                    |> Result.map BigInt.toString
+                    |> Expect.err
+        , test "spacey string" <|
             \_ ->
                 Base58.decode " "
                     |> Result.map BigInt.toString
