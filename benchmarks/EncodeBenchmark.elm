@@ -14,5 +14,5 @@ main =
 benchmark : Benchmark
 benchmark =
     describe "encode"
-        [ benchmark1 "an IPFS hash" Base58.encode (BigInt.fromInt 98765432123456789)
+        [ benchmark1 "a BigInt" Base58.encode (BigInt.fromInt 98765432123567890)
         ]

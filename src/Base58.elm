@@ -26,70 +26,71 @@ alphabetArr =
         |> Array.fromList
 
 
-{-| Decodes turns a string into its original BigInt
+alphabetLength : BigInt
+alphabetLength =
+    fromInt (String.length alphabet)
+
+
+getIndex : Char -> Result String BigInt
+getIndex char =
+    String.indexes (String.fromChar char) alphabet
+        |> List.head
+        |> Result.fromMaybe ("'" ++ String.fromChar char ++ "' is not a valid base58 character.")
+        |> Result.map BigInt.fromInt
+
+
+{-| Decodes a string into a BigInt
 
     "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
-    |> Base58.decode
+      |> Base58.decode
+      |> Result.toMaybe
     == BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
 
 -}
-decode : String -> BigInt
+decode : String -> Result String BigInt
 decode str =
     let
-        alphabetLength =
-            fromInt (String.length alphabet)
-
-        len =
-            fromInt (String.length str)
-
         strList =
             String.toList str
 
-        ( _, decoded ) =
+        ( _, decodedResult ) =
             List.foldr
                 (\letter ( multi, dec ) ->
                     let
-                        indexes =
-                            String.indexes (String.fromChar letter) alphabet
-
-                        index =
-                            fromInt (Maybe.withDefault 0 (List.head indexes))
-
                         result =
-                            BigInt.add dec (BigInt.mul multi index)
+                            getIndex letter
+                                |> Result.map (BigInt.mul multi)
+                                |> Result.andThen (\n -> Result.map (BigInt.add n) dec)
 
                         mul =
                             BigInt.mul multi alphabetLength
                     in
                         ( mul, result )
                 )
-                ( fromInt 1, fromInt 0 )
+                ( fromInt 1, Ok (fromInt 0) )
                 strList
     in
-        decoded
+        decodedResult
 
 
-{-| Encode turns a big int into a string
+{-| Encodes a BigInt into a string
 
     BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
-    |> Base58.encode
-    == "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
+      |> Maybe.map Base58.encode
+    == Ok "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
 
 -}
 encode : BigInt -> String
 encode num =
     let
-        alphabetLength =
-            fromInt (String.length alphabet)
-
         ( _, encoded ) =
-            encodeReduce num alphabetLength ( "", fromInt 0 )
+            encodeReduce num ( "", fromInt 0 )
     in
         encoded
 
 
-encodeReduce : BigInt -> BigInt -> ( String, BigInt ) -> ( BigInt, String )
-encodeReduce num alphabetLength ( encoded, n ) =
+encodeReduce : BigInt -> ( String, BigInt ) -> ( BigInt, String )
+encodeReduce num ( encoded, n ) =
     if BigInt.gte num alphabetLength then
         let
             dv =
@@ -107,7 +108,7 @@ encodeReduce num alphabetLength ( encoded, n ) =
             newEncoded =
                 i ++ encoded
         in
-            encodeReduce dv alphabetLength ( newEncoded, dv )
+            encodeReduce dv ( newEncoded, dv )
     else
         let
             index =
