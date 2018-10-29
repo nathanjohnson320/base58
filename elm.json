@@ -2,7 +2,7 @@
     "type": "package",
     "name": "nathanjohnson320/base58",
     "summary": "Base58 encoding/decoding library",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "version": "2.0.1",
     "exposed-modules": [
         "Base58"
