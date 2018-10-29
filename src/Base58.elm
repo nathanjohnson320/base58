@@ -9,9 +9,9 @@ module Base58 exposing (decode, encode)
 
 -}
 
-import String
 import Array exposing (Array)
-import BigInt exposing (BigInt, fromInt)
+import BigInt exposing (BigInt)
+import String
 
 
 alphabet : String
@@ -28,7 +28,7 @@ alphabetArr =
 
 alphabetLength : BigInt
 alphabetLength =
-    fromInt (String.length alphabet)
+    BigInt.fromInt (String.length alphabet)
 
 
 getIndex : Char -> Result String BigInt
@@ -42,9 +42,9 @@ getIndex char =
 {-| Decodes a string into a BigInt
 
     "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
-      |> Base58.decode
-      |> Result.toMaybe
-    == BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
+        |> Base58.decode
+        |> Result.toMaybe
+        == BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
 
 -}
 decode : String -> Result String BigInt
@@ -65,31 +65,32 @@ decode str =
                         mul =
                             BigInt.mul multi alphabetLength
                     in
-                        ( mul, result )
+                    ( mul, result )
                 )
-                ( fromInt 1, Ok (fromInt 0) )
+                ( BigInt.fromInt 1, Ok (BigInt.fromInt 0) )
                 strList
     in
-        if str == "" then
-            Err "An empty string is not valid base58"
-        else
-            decodedResult
+    if str == "" then
+        Err "An empty string is not valid base58"
+
+    else
+        decodedResult
 
 
 {-| Encodes a BigInt into a string
 
     BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
-      |> Maybe.map Base58.encode
-    == Ok "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
+        |> Maybe.map Base58.encode
+        == Ok "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
 
 -}
 encode : BigInt -> String
 encode num =
     let
         ( _, encoded ) =
-            encodeReduce num ( "", fromInt 0 )
+            encodeReduce num ( "", BigInt.fromInt 0 )
     in
-        encoded
+    encoded
 
 
 encodeReduce : BigInt -> ( String, BigInt ) -> ( BigInt, String )
@@ -100,10 +101,10 @@ encodeReduce num ( encoded, n ) =
                 BigInt.div num alphabetLength
 
             md =
-                (BigInt.sub num (BigInt.mul alphabetLength dv))
+                BigInt.sub num (BigInt.mul alphabetLength dv)
 
             index =
-                Result.withDefault 0 (String.toInt (BigInt.toString md))
+                Maybe.withDefault 0 (String.toInt (BigInt.toString md))
 
             i =
                 String.fromChar (Maybe.withDefault '0' (Array.get index alphabetArr))
@@ -111,11 +112,12 @@ encodeReduce num ( encoded, n ) =
             newEncoded =
                 i ++ encoded
         in
-            encodeReduce dv ( newEncoded, dv )
+        encodeReduce dv ( newEncoded, dv )
+
     else
         let
             index =
-                Result.withDefault 0 (String.toInt (BigInt.toString num))
+                Maybe.withDefault 0 (String.toInt (BigInt.toString num))
 
             i =
                 String.fromChar (Maybe.withDefault '0' (Array.get index alphabetArr))
@@ -123,4 +125,4 @@ encodeReduce num ( encoded, n ) =
             newEncoded =
                 i ++ encoded
         in
-            ( fromInt 0, newEncoded )
+        ( BigInt.fromInt 0, newEncoded )
