@@ -79,7 +79,7 @@ decode str =
 
 {-| Encodes a BigInt into a string
 
-    BigInt.fromString "146192635802076751054841979942155177482410195601230638449945"
+    BigInt.fromIntString "146192635802076751054841979942155177482410195601230638449945"
         |> Maybe.map Base58.encode
         == Ok "ANYBx47k26vP81XFbQXh6XKUj7ptQRJMLt"
 
